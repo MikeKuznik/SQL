@@ -55,3 +55,60 @@ VALUES
     ('Company II', 'Telecommunications', 110.5, 2000, 1, 21, 12, 4.9),
     ('Company JJ', 'Manufacturing', 370.0, 3100, 1, 20, 12, 7.6),
     ('Company KK', 'Healthcare', 150.2, 3400, 0, 16, 8, 5.3);
+
+-- Analysis --
+
+-- Get to know the table and data.
+SELECT * 
+FROM fortune_companies
+LIMIT 5
+;
+
+-- 1 # Which companies have healthcare benefits and at least 20 paid time off days?
+SELECT company_name
+,industry
+,healthcare_benefits
+,paid_time_off_days
+FROM fortune_companies
+WHERE healthcare_benefits = 1
+AND paid_time_off_days > 20
+ORDER BY paid_time_off_days desc
+;
+
+-- 2 # How many companies are their in each industry?
+SELECT industry
+,COUNT(industry) AS total_companies
+FROM fortune_companies
+GROUP BY industry
+ORDER BY total_companies 
+;
+
+-- 3 # What is the total revenue of each industy rounded to the nearest tenth decimal?
+SELECT industry
+,ROUND (SUM(revenue),1) AS total_rev_industry
+FROM fortune_companies
+GROUP BY industry
+HAVING total_rev_industry > 100
+;
+
+-- 4 # Assign all the companies in the Technology industry as "mother friendly workplace", 
+"acceptable", or "not desirable" based on the maternity leave offered. 
+SELECT company_name
+,industry
+,CASE
+	WHEN maternity_leave_weeks > 10 THEN 'mother friendly'
+    WHEN maternity_leave_weeks > 8 THEN 'acceptable'
+    ELSE 'not desirable'
+    END as 'Mother Friendliness'
+FROM fortune_companies
+WHERE industry = 'Technology'
+;
+
+-- 5 # Which industries have an average revenue of at least $200 Billion, and what are their avg revenues?
+SELECT industry
+,ROUND(AVG(revenue),1) as avg_revenue_billions
+FROM fortune_companies
+GROUP BY industry
+HAVING avg_revenue_billions>=200
+;
+
