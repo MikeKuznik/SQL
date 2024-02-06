@@ -1,0 +1,81 @@
+# For this project, I downloaded Spotify Top 50 Songs in 2021 data from Kaggle.
+# Then I created a table to insert the Spotify data into.
+# Finally, I performed analytics on the data using SQL. 
+
+#Creating the table: 
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+
+#Then I inserted the Spotify Data .csv into the table.
+
+#Next, I explored the data using the following SQL.
+
+-- Explore the data
+SELECT * FROM BIT_DB.Spotifydata LIMIT 10
+;
+
+-- #1. What is the average popularity rating for the Top 50 Spotify songs?
+SELECT avg(popularity)
+FROM BIT_DB.Spotifydata
+;
+
+-- #2. Which artist & song finished in the top 10 in popularity of the 50?
+SELECT popularity
+,artist_name
+,track_name
+FROM BIT_DB.Spotifydata
+ORDER BY popularity desc
+LIMIT 10
+;
+
+-- #3. How many tracks does each artist have in the Top 50?
+SELECT COUNT(artist_name) as num_song
+,artist_name
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY num_song desc
+;
+
+-- #4. What artist released the longest song?
+SELECT artist_name
+,track_name
+,MAX(duration_ms) as longest_song_time
+FROM BIT_DB.Spotifydata
+;
+
+-- #5. What's the average danceability for the 10 most popular songs as a percent?
+SELECT AVG(danceability)*100 AS avg_danceability
+FROM BIT_DB.Spotifydata
+WHERE track_name IN (
+  SELECT track_name 
+  FROM BIT_DB.Spotifydata
+  ORDER BY popularity DESC
+  LIMIT 10)
+;
+  
+-- #6. Which songs have a popularity greater then 90 and a temp greater then 100
+SELECT track_name
+,popularity
+,tempo
+FROM BIT_DB.Spotifydata
+WHERE popularity >= 90
+AND tempo >= 100
+;
